@@ -14,7 +14,6 @@ const LS_KEY = 'freewilma_freedom';
 const dayCountEl = document.getElementById('day-count');
 const vapauteenWrap = document.getElementById('vapauteen-wrap');
 const btnVapauteen = document.getElementById('btn-vapauteen');
-const btnTest = document.getElementById('btn-test');
 const btnReroll = document.getElementById('btn-reroll');
 const d20Svg = document.querySelector('.d20-svg');
 const wotdText = document.getElementById('wotd-text');
@@ -95,8 +94,8 @@ let currentWordIdx = -1;
 
 function renderWord(word) {
     wotdText.innerHTML =
-        `Wilman <span class="wotd-finnish">${escapeHtml(word.fi)}</span>` +
-        ` <span class="wotd-spanish">(${escapeHtml(word.es)})</span>`;
+        `<span class="wotd-finnish">Wilman ${escapeHtml(word.fi)}</span>` +
+        `&nbsp;<span class="wotd-spanish">(${escapeHtml(word.es)})</span>`;
 }
 
 function escapeHtml(str) {
@@ -168,17 +167,25 @@ function clearCelebration() {
     celebrationTimers = [];
     diceRainEl.innerHTML = '';
     emojiBurstEl.innerHTML = '';
+    // Reset opacity for next celebration
+    diceRainEl.style.transition = '';
+    emojiBurstEl.style.transition = '';
+    diceRainEl.style.opacity = '1';
+    emojiBurstEl.style.opacity = '1';
     celebrationActive = false;
 }
 
 function spawnFallingDice() {
-    const el = document.createElement('span');
+    const el = document.createElement('img');
+    el.src = 'd20.png';
+    el.alt = '';
     el.className = 'falling-dice';
-    el.textContent = '🎲';
     el.style.left = Math.random() * 100 + 'vw';
     const dur = 2.5 + Math.random() * 3;
     el.style.animationDuration = dur + 's';
-    el.style.fontSize = (1.5 + Math.random() * 2) + 'rem';
+    const size = (2 + Math.random() * 2.5);
+    el.style.width = size + 'rem';
+    el.style.height = size + 'rem';
     diceRainEl.appendChild(el);
     const t = setTimeout(() => el.remove(), dur * 1000 + 200);
     celebrationTimers.push(t);
@@ -243,26 +250,35 @@ function startCelebration() {
     // Confetti
     launchConfetti();
 
-    // Dice rain — spawn continuously for 8 seconds
+    // Dice rain — spawn continuously for ~5 seconds
     let diceCount = 0;
     const diceInterval = setInterval(() => {
         spawnFallingDice();
         diceCount++;
-        if (diceCount > 40) clearInterval(diceInterval);
+        if (diceCount > 25) clearInterval(diceInterval);
     }, 180);
 
-    // Emoji bursts — spawn continuously for 8 seconds
+    // Emoji bursts — spawn continuously for ~5 seconds
     let emojiCount = 0;
     const emojiInterval = setInterval(() => {
         spawnFloatingEmoji();
         emojiCount++;
-        if (emojiCount > 30) clearInterval(emojiInterval);
+        if (emojiCount > 20) clearInterval(emojiInterval);
     }, 250);
 
-    // Auto-clear after 12 seconds
+    // Fade out after 6.5s, then clear at 8s
+    const fadeTimer = setTimeout(() => {
+        diceRainEl.style.transition = 'opacity 1.5s ease';
+        emojiBurstEl.style.transition = 'opacity 1.5s ease';
+        diceRainEl.style.opacity = '0';
+        emojiBurstEl.style.opacity = '0';
+    }, 6500);
+    celebrationTimers.push(fadeTimer);
+
+    // Auto-clear after 8 seconds
     const clearTimer = setTimeout(() => {
         clearCelebration();
-    }, 12000);
+    }, 8000);
     celebrationTimers.push(clearTimer);
 }
 
@@ -270,13 +286,6 @@ function startCelebration() {
 function handleVapauteen() {
     // Mark freedom achieved in localStorage
     localStorage.setItem(LS_KEY, '1');
-    startCelebration();
-}
-
-// ── Test button ────────────────────────────────────────────
-function handleTest() {
-    // Temporarily show zero state
-    renderCounter(0);
     startCelebration();
 }
 
@@ -311,7 +320,6 @@ async function init() {
 
     // Event listeners
     btnVapauteen.addEventListener('click', handleVapauteen);
-    btnTest.addEventListener('click', handleTest);
     btnReroll.addEventListener('click', doReroll);
 
     // Update counter at midnight

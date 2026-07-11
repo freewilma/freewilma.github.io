@@ -2,7 +2,7 @@
    FreeWilma — Service Worker (PWA)
    ============================================================ */
 
-const CACHE_NAME = 'freewilma-v1';
+const CACHE_NAME = 'freewilma-v3';
 const ASSETS = [
     './',
     './index.html',
@@ -11,6 +11,7 @@ const ASSETS = [
     './wordlist_spanish.txt',
     './freewilma.mp3',
     './dice-roll.mp3',
+    './d20.png',
     './manifest.json',
     './icons/icon-192.png',
     './icons/icon-512.png',
