@@ -1,0 +1,566 @@
+/* ============================================================
+   FreeWilma — Military Green meets DnD
+   ============================================================ */
+
+/* ---------- CSS Variables ---------- */
+:root {
+    --green-dark: #1a2210;
+    --green-mid: #2d3a1e;
+    --green-main: #3d5226;
+    --green-light: #5a7a35;
+    --green-bright: #7aaa45;
+    --gold: #c9a84c;
+    --gold-light: #f0d080;
+    --gold-glow: #ffe066;
+    --parchment: #e8dfc0;
+    --parchment-dim: #c8b98a;
+    --ink: #1a1a0e;
+    --red-accent: #8b2020;
+    --white-soft: #f5f0e0;
+
+    --font-fantasy: 'Cinzel', 'Georgia', serif;
+    --font-deco: 'Cinzel Decorative', 'Georgia', serif;
+    --font-mono: 'Share Tech Mono', 'Courier New', monospace;
+}
+
+/* ---------- Reset & Base ---------- */
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html {
+    font-size: 16px;
+    scroll-behavior: smooth;
+}
+
+body {
+    min-height: 100dvh;
+    background-color: var(--green-dark);
+    background-image:
+        radial-gradient(ellipse at 20% 10%, rgba(90, 122, 53, 0.18) 0%, transparent 60%),
+        radial-gradient(ellipse at 80% 90%, rgba(45, 58, 30, 0.4) 0%, transparent 60%),
+        repeating-linear-gradient(0deg,
+            transparent,
+            transparent 40px,
+            rgba(255, 255, 255, 0.012) 40px,
+            rgba(255, 255, 255, 0.012) 41px),
+        repeating-linear-gradient(90deg,
+            transparent,
+            transparent 40px,
+            rgba(255, 255, 255, 0.012) 40px,
+            rgba(255, 255, 255, 0.012) 41px);
+    color: var(--parchment);
+    font-family: var(--font-fantasy);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    overflow-x: hidden;
+    position: relative;
+}
+
+/* ---------- Background texture ---------- */
+.bg-texture {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    background-image:
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+    opacity: 0.6;
+}
+
+/* ---------- Main layout ---------- */
+main {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    max-width: 600px;
+    min-height: 100dvh;
+    padding: 1.5rem 1.25rem 3rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+/* ---------- Header ---------- */
+.site-header {
+    width: 100%;
+    text-align: center;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid var(--green-light);
+    position: relative;
+}
+
+.site-header::after {
+    content: '⚔ ✦ ⚔';
+    display: block;
+    font-size: 0.75rem;
+    color: var(--gold);
+    letter-spacing: 0.4em;
+    margin-top: 0.4rem;
+    opacity: 0.7;
+}
+
+.title {
+    font-family: var(--font-deco);
+    font-size: clamp(1.8rem, 8vw, 3rem);
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    line-height: 1.1;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.6), 0 0 20px rgba(90, 122, 53, 0.3);
+}
+
+.title-tj {
+    color: var(--green-bright);
+}
+
+.title-tag {
+    color: var(--gold);
+    margin-left: 0.3em;
+}
+
+.kotiutumis {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    color: var(--parchment-dim);
+    letter-spacing: 0.08em;
+    margin-top: 0.35rem;
+    opacity: 0.8;
+}
+
+.kotiutumis strong {
+    color: var(--gold-light);
+}
+
+/* ---------- Counter Section ---------- */
+.counter-section {
+    width: 100%;
+    text-align: center;
+    padding: 1.5rem 0 1rem;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.counter-label {
+    font-family: var(--font-mono);
+    font-size: clamp(0.65rem, 2.5vw, 0.85rem);
+    letter-spacing: 0.35em;
+    color: var(--green-bright);
+    text-transform: uppercase;
+    margin-bottom: 0.5rem;
+    opacity: 0.85;
+}
+
+.day-count {
+    font-family: var(--font-mono);
+    font-size: clamp(5.5rem, 28vw, 12rem);
+    font-weight: 700;
+    line-height: 1;
+    color: var(--green-bright);
+    text-shadow:
+        0 0 30px rgba(122, 170, 69, 0.5),
+        0 0 60px rgba(122, 170, 69, 0.2),
+        0 4px 12px rgba(0, 0, 0, 0.7);
+    transition: color 0.5s ease;
+    will-change: transform;
+    display: inline-block;
+}
+
+/* Zero state */
+.day-count.is-zero {
+    animation: pulse-zero 2s ease-in-out infinite;
+    color: var(--gold-glow);
+    text-shadow:
+        0 0 30px rgba(255, 224, 102, 0.8),
+        0 0 60px rgba(255, 224, 102, 0.4),
+        0 0 100px rgba(255, 224, 102, 0.2),
+        0 4px 12px rgba(0, 0, 0, 0.7);
+}
+
+@keyframes pulse-zero {
+
+    0%,
+    100% {
+        transform: scale(1);
+        color: var(--gold-glow);
+    }
+
+    25% {
+        transform: scale(1.06);
+        color: #ff9f43;
+    }
+
+    50% {
+        transform: scale(1.02);
+        color: #ffd700;
+    }
+
+    75% {
+        transform: scale(1.08);
+        color: #ff6b6b;
+    }
+}
+
+/* ---------- Vapauteen Button ---------- */
+.vapauteen-wrap {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    padding: 0.5rem 0 1rem;
+}
+
+.vapauteen-wrap.hidden {
+    display: none;
+}
+
+.btn-vapauteen {
+    font-family: var(--font-deco);
+    font-size: clamp(1.3rem, 5vw, 1.8rem);
+    font-weight: 700;
+    color: var(--ink);
+    background: linear-gradient(135deg, var(--gold) 0%, var(--gold-light) 50%, var(--gold) 100%);
+    border: 3px solid var(--gold-light);
+    border-radius: 6px;
+    padding: 0.9em 2em;
+    cursor: pointer;
+    letter-spacing: 0.08em;
+    text-shadow: 0 1px 2px rgba(255, 255, 255, 0.3);
+    box-shadow:
+        0 4px 20px rgba(201, 168, 76, 0.5),
+        0 0 40px rgba(201, 168, 76, 0.2),
+        inset 0 1px 0 rgba(255, 255, 255, 0.3);
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.btn-vapauteen::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, transparent 40%, rgba(255, 255, 255, 0.15) 50%, transparent 60%);
+    transform: translateX(-100%);
+    transition: transform 0.4s ease;
+}
+
+.btn-vapauteen:hover::before {
+    transform: translateX(100%);
+}
+
+.btn-vapauteen:hover {
+    transform: translateY(-2px) scale(1.02);
+    box-shadow:
+        0 8px 30px rgba(201, 168, 76, 0.7),
+        0 0 60px rgba(201, 168, 76, 0.3),
+        inset 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+
+.btn-vapauteen:active {
+    transform: translateY(1px) scale(0.98);
+}
+
+/* ---------- Test Button ---------- */
+.test-wrap {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    padding: 0.25rem 0;
+}
+
+.btn-test {
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    color: var(--parchment-dim);
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px dashed var(--green-light);
+    border-radius: 4px;
+    padding: 0.5em 1.2em;
+    cursor: pointer;
+    letter-spacing: 0.05em;
+    transition: background 0.2s, color 0.2s;
+    opacity: 0.7;
+}
+
+.btn-test:hover {
+    background: rgba(90, 122, 53, 0.2);
+    color: var(--parchment);
+    opacity: 1;
+}
+
+/* ---------- Word of the Day ---------- */
+.wotd-section {
+    width: 100%;
+    padding: 0.5rem 0 0;
+}
+
+.wotd-card {
+    background: rgba(26, 34, 16, 0.7);
+    border: 1px solid var(--green-light);
+    border-radius: 8px;
+    padding: 1rem 1.25rem 1.1rem;
+    position: relative;
+    box-shadow:
+        0 2px 12px rgba(0, 0, 0, 0.4),
+        inset 0 1px 0 rgba(90, 122, 53, 0.2);
+}
+
+.wotd-card::before,
+.wotd-card::after {
+    content: '◆';
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--gold);
+    font-size: 0.6rem;
+    opacity: 0.5;
+}
+
+.wotd-card::before {
+    left: 0.4rem;
+}
+
+.wotd-card::after {
+    right: 0.4rem;
+}
+
+.wotd-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 0.6rem;
+}
+
+.wotd-label {
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    letter-spacing: 0.3em;
+    color: var(--gold);
+    text-transform: uppercase;
+    opacity: 0.85;
+}
+
+/* Reroll button */
+.btn-reroll {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0.2rem;
+    color: var(--green-bright);
+    transition: color 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.btn-reroll:hover {
+    color: var(--gold);
+}
+
+.d20-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.d20-svg {
+    width: 44px;
+    height: 44px;
+    transition: transform 0.1s ease;
+    filter: drop-shadow(0 0 4px rgba(122, 170, 69, 0.4));
+}
+
+/* D20 roll animation */
+@keyframes d20-roll {
+    0% {
+        transform: rotate(0deg) scale(1);
+    }
+
+    20% {
+        transform: rotate(72deg) scale(1.15);
+    }
+
+    40% {
+        transform: rotate(144deg) scale(0.9);
+    }
+
+    60% {
+        transform: rotate(216deg) scale(1.1);
+    }
+
+    80% {
+        transform: rotate(288deg) scale(0.95);
+    }
+
+    100% {
+        transform: rotate(360deg) scale(1);
+    }
+}
+
+.d20-svg.rolling {
+    animation: d20-roll 0.55s cubic-bezier(0.36, 0.07, 0.19, 0.97);
+}
+
+.wotd-text {
+    font-family: var(--font-fantasy);
+    font-size: clamp(0.95rem, 3.5vw, 1.15rem);
+    color: var(--white-soft);
+    line-height: 1.5;
+    text-align: center;
+    min-height: 2.5em;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.wotd-text .wotd-finnish {
+    color: var(--gold-light);
+    font-weight: 700;
+}
+
+.wotd-text .wotd-spanish {
+    color: var(--parchment-dim);
+    font-style: italic;
+}
+
+/* ---------- Celebration Layers ---------- */
+#dice-rain {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 50;
+    overflow: hidden;
+}
+
+#emoji-burst {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 51;
+    overflow: hidden;
+}
+
+/* Falling dice */
+.falling-dice {
+    position: absolute;
+    top: -120px;
+    font-size: 2.5rem;
+    animation: fall-dice linear forwards;
+    will-change: transform, opacity;
+    filter: drop-shadow(0 0 6px rgba(201, 168, 76, 0.6));
+}
+
+@keyframes fall-dice {
+    0% {
+        transform: translateY(0) rotate(0deg) scale(0.8);
+        opacity: 0;
+    }
+
+    5% {
+        opacity: 1;
+    }
+
+    90% {
+        opacity: 1;
+    }
+
+    100% {
+        transform: translateY(110vh) rotate(720deg) scale(1.1);
+        opacity: 0;
+    }
+}
+
+/* Floating emojis */
+.float-emoji {
+    position: absolute;
+    font-size: clamp(2rem, 6vw, 3.5rem);
+    animation: float-up linear forwards;
+    will-change: transform, opacity;
+}
+
+@keyframes float-up {
+    0% {
+        transform: translateY(0) scale(0.5) rotate(-10deg);
+        opacity: 0;
+    }
+
+    10% {
+        opacity: 1;
+        transform: translateY(-10px) scale(1.1) rotate(5deg);
+    }
+
+    80% {
+        opacity: 1;
+    }
+
+    100% {
+        transform: translateY(-80vh) scale(0.8) rotate(15deg);
+        opacity: 0;
+    }
+}
+
+/* ---------- Utility ---------- */
+.hidden {
+    display: none !important;
+}
+
+/* ---------- Scrollbar ---------- */
+::-webkit-scrollbar {
+    width: 6px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--green-dark);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--green-main);
+    border-radius: 3px;
+}
+
+/* ---------- Selection ---------- */
+::selection {
+    background: var(--gold);
+    color: var(--ink);
+}
+
+/* ---------- Focus visible ---------- */
+:focus-visible {
+    outline: 2px solid var(--gold);
+    outline-offset: 3px;
+    border-radius: 3px;
+}
+
+/* ---------- Responsive tweaks ---------- */
+@media (max-width: 380px) {
+    .title {
+        font-size: 1.6rem;
+    }
+
+    .day-count {
+        font-size: 5rem;
+    }
+
+    .btn-vapauteen {
+        font-size: 1.1rem;
+        padding: 0.8em 1.5em;
+    }
+}
+
+@media (min-height: 800px) {
+    main {
+        gap: 1rem;
+    }
+
+    .counter-section {
+        padding: 2rem 0 1.5rem;
+    }
+}
