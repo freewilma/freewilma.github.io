@@ -41,7 +41,11 @@ function getDaysRemaining() {
 
 // ── Render counter ─────────────────────────────────────────
 function renderCounter(days) {
-    dayCountEl.textContent = days;
+    // Wrap each digit in its own span for per-numeral animation
+    dayCountEl.innerHTML = String(days)
+        .split('')
+        .map(ch => `<span class="digit">${ch}</span>`)
+        .join('');
 
     if (days === 0) {
         dayCountEl.classList.add('is-zero');
@@ -164,6 +168,20 @@ function playRifleSound() {
         audioRifle.currentTime = 0;
         audioRifle.play().catch(() => { });
     } catch (e) { }
+
+    // Animate each digit with a slight stagger
+    const digits = dayCountEl.querySelectorAll('.digit');
+    digits.forEach((span, i) => {
+        span.style.animationDelay = `${i * 35}ms`;
+        span.classList.remove('digit-press');
+        // Force reflow so the animation restarts cleanly
+        void span.offsetWidth;
+        span.classList.add('digit-press');
+        span.addEventListener('animationend', () => {
+            span.classList.remove('digit-press');
+            span.style.animationDelay = '';
+        }, { once: true });
+    });
 }
 
 // ── Celebration ────────────────────────────────────────────
