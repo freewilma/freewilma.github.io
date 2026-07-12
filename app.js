@@ -9,6 +9,7 @@ const START_DATE = new Date('2026-06-06T00:00:00');
 const END_DATE = new Date('2027-06-17T00:00:00');
 const TOTAL_DAYS = 347;
 const LS_KEY = 'freewilma_freedom';
+const LS_COUNT_KEY = 'freewilma_last_count';
 
 // ── DOM refs ───────────────────────────────────────────────
 const dayCountEl = document.getElementById('day-count');
@@ -336,21 +337,29 @@ async function init() {
     // Calculate days
     const days = getDaysRemaining();
 
-    // If freedom was already achieved (localStorage), show 0
-    const freedomAchieved = localStorage.getItem(LS_KEY) === '1';
-    if (freedomAchieved && days === 0) {
-        renderCounter(0);
-    } else {
-        renderCounter(days);
-    }
+    // Show the last saved count (so it only updates when the user taps it).
+    // On first visit there's no saved value, so fall back to the real count.
+    const savedCount = localStorage.getItem(LS_COUNT_KEY);
+    const displayDays = savedCount !== null ? parseInt(savedCount, 10) : days;
+    renderCounter(displayDays);
 
     // Event listeners
     btnVapauteen.addEventListener('click', handleVapauteen);
     btnReroll.addEventListener('click', doReroll);
-    dayCountEl.addEventListener('click', playRifleSound);
+    dayCountEl.addEventListener('click', handleCounterClick);
 
-    // Update counter at midnight
+    // Keep the stored count fresh at midnight (no visual update — that's for the tap)
     scheduleNextDayUpdate();
+}
+
+function handleCounterClick() {
+    const days = getDaysRemaining();
+    // Save the real current count so the next page load remembers it
+    localStorage.setItem(LS_COUNT_KEY, String(days));
+    // Re-render with the updated number
+    renderCounter(days);
+    // Play sound + digit animation
+    playRifleSound();
 }
 
 function scheduleNextDayUpdate() {
@@ -358,8 +367,10 @@ function scheduleNextDayUpdate() {
     const tomorrow = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1);
     const msUntil = tomorrow - now;
     setTimeout(() => {
+        // Silently update the stored count at midnight — no visual change.
+        // The display will update the next time the user taps the counter.
         const days = getDaysRemaining();
-        renderCounter(days);
+        localStorage.setItem(LS_COUNT_KEY, String(days));
         initWordOfDay();
         scheduleNextDayUpdate();
     }, msUntil + 500); // +500ms buffer
