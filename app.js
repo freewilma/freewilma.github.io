@@ -112,10 +112,16 @@ function escapeHtml(str) {
         .replace(/"/g, '&quot;');
 }
 
-function initWordOfDay() {
-    const word = pickDailyWord();
-    // Find its index
-    currentWordIdx = wordlist.findIndex(w => w.fi === word.fi);
+function initWordOfDay(days) {
+    let word;
+    if (days === 0) {
+        // Always default to wapaus – libertad (row 1476, index 1475)
+        word = wordlist[1475] || { fi: 'wapaus', es: 'libertad' };
+        currentWordIdx = 1475;
+    } else {
+        word = pickDailyWord();
+        currentWordIdx = wordlist.findIndex(w => w.fi === word.fi);
+    }
     renderWord(word);
 }
 
@@ -330,10 +336,6 @@ async function init() {
     // Register PWA
     registerSW();
 
-    // Load wordlist then show word
-    await loadWordlist();
-    initWordOfDay();
-
     // Calculate days
     const days = getDaysRemaining();
 
@@ -341,6 +343,11 @@ async function init() {
     // On first visit there's no saved value, so fall back to the real count.
     const savedCount = localStorage.getItem(LS_COUNT_KEY);
     const displayDays = savedCount !== null ? parseInt(savedCount, 10) : days;
+
+    // Load wordlist then show word (pass displayDays so count=0 gets wapaus)
+    await loadWordlist();
+    initWordOfDay(displayDays);
+
     renderCounter(displayDays);
 
     // Event listeners
@@ -371,7 +378,7 @@ function scheduleNextDayUpdate() {
         // The display will update the next time the user taps the counter.
         const days = getDaysRemaining();
         localStorage.setItem(LS_COUNT_KEY, String(days));
-        initWordOfDay();
+        initWordOfDay(days);
         scheduleNextDayUpdate();
     }, msUntil + 500); // +500ms buffer
 }
