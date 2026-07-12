@@ -423,6 +423,7 @@ main {
 .wotd-text .wotd-spanish {
     color: var(--parchment-dim);
     font-style: normal;
+    flex-basis: 100%;
 }
 
 /* Reroll row — centered below the word */
