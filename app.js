@@ -21,6 +21,7 @@ const diceRainEl = document.getElementById('dice-rain');
 const emojiBurstEl = document.getElementById('emoji-burst');
 const audioFreedom = document.getElementById('audio-freedom');
 const audioDice = document.getElementById('audio-dice');
+const audioRifle = document.getElementById('audio-rifle');
 
 // ── State ──────────────────────────────────────────────────
 let wordlist = [];   // [{fi, es}]
@@ -155,6 +156,13 @@ function stopFreedomSound() {
     try {
         audioFreedom.pause();
         audioFreedom.currentTime = 0;
+    } catch (e) { }
+}
+
+function playRifleSound() {
+    try {
+        audioRifle.currentTime = 0;
+        audioRifle.play().catch(() => { });
     } catch (e) { }
 }
 
@@ -321,6 +329,7 @@ async function init() {
     // Event listeners
     btnVapauteen.addEventListener('click', handleVapauteen);
     btnReroll.addEventListener('click', doReroll);
+    dayCountEl.addEventListener('click', playRifleSound);
 
     // Update counter at midnight
     scheduleNextDayUpdate();

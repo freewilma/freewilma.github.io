@@ -172,6 +172,21 @@ main {
     transition: color 0.5s ease;
     will-change: transform;
     display: inline-block;
+    cursor: pointer;
+    animation: count-breathe 3s ease-in-out infinite;
+    -webkit-tap-highlight-color: transparent;
+}
+
+@keyframes count-breathe {
+
+    0%,
+    100% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.07);
+    }
 }
 
 /* Zero state */
